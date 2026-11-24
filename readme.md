@@ -57,7 +57,7 @@ Unlike static pages or bloated finance apps that require bank linking, RupeeTrac
 ## Screenshots
 
 ### Home Dashboard & Live KPIs
-![Home Dashboard](05_Screenshots/Project_Screenshots/01_home_dashboard.jpg)
+![Home Dashboard](05_Screenshots/Project_Screenshots/01_home_dashboard.png)
 
 | Form Validation | Insights Breakdown |
 | :---: | :---: |
