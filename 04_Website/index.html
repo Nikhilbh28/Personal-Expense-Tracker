@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RupeeTrack • Personal Expense Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="toast" role="status"></div>
+
+  <header class="topbar">
+    <div class="wrap flex items-center justify-between gap-3 h-16">
+      <div class="flex items-center gap-3">
+        <div class="logo">₹</div>
+        <b class="mono text-lg">RupeeTrack</b>
+      </div>
+      <nav class="tabs" id="tabs">
+        <a class="tab active" href="#home" data-view="home">Home</a>
+        <a class="tab" href="#insights" data-view="insights">Insights</a>
+        <a class="tab" href="#limits" data-view="limits">Limits</a>
+        <a class="tab" href="#ledger" data-view="ledger">Ledger</a>
+      </nav>
+      <button class="flex items-center gap-2" id="userBtn" title="Click to change your name">
+        <span class="avatar" id="avatar">U</span>
+        <span class="hidden sm:block text-sm" id="userName">You</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap pt-24 pb-10">
+    <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+      <div>
+        <p class="label" id="monthLabel"></p>
+        <h1 class="mono text-3xl font-bold" id="greeting"></h1>
+      </div>
+      <div class="seg" id="period">
+        <button class="active" data-p="month">This month</button>
+        <button data-p="all">All time</button>
+      </div>
+    </div>
+
+    <!-- ============ HOME ============ -->
+    <section class="view active" id="view-home">
+      <div class="grid md:grid-cols-3 gap-5 mb-5">
+        <div class="bento p-6">
+          <p class="label">Total inflow</p>
+          <p class="big mono" id="sumIn">₹0</p>
+          <p class="sub" id="sumInSub"></p>
+        </div>
+        <div class="bento p-6">
+          <p class="label">Total outflow</p>
+          <p class="big mono" id="sumOut">₹0</p>
+          <p class="sub" id="sumOutSub"></p>
+        </div>
+        <div class="bento p-6">
+          <div class="flex justify-between items-start gap-2">
+            <p class="label">Net savings</p>
+            <span class="pill" id="vibe"></span>
+          </div>
+          <p class="big mono" id="sumNet">₹0</p>
+          <p class="sub" id="sumNetSub"></p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-5 gap-5">
+        <div class="bento p-6 lg:col-span-2">
+          <h2 class="mono text-xl font-bold mb-1" id="formTitle">Fast drop</h2>
+          <p class="sub mb-4">Log a transaction in seconds</p>
+          <form id="txForm" novalidate class="grid gap-3">
+            <input type="hidden" id="editId" />
+            <div class="seg" id="typeSeg">
+              <button type="button" class="active" data-t="expense">Expense</button>
+              <button type="button" data-t="income">Income</button>
+            </div>
+            <div>
+              <label class="label" for="fTitle">Title</label>
+              <input id="fTitle" class="field" maxlength="40" placeholder="e.g. Swiggy dinner" />
+              <p class="err" id="eTitle"></p>
+            </div>
+            <div>
+              <label class="label" for="fAmount">Amount (₹)</label>
+              <input id="fAmount" class="field" type="number" step="0.01" placeholder="0.00" />
+              <p class="err" id="eAmount"></p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="label" for="fCat">Category</label>
+                <select id="fCat" class="field"></select>
+              </div>
+              <div>
+                <label class="label" for="fDate">Date</label>
+                <input id="fDate" class="field" type="date" />
+                <p class="err" id="eDate"></p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn primary flex-1" id="submitBtn">Add transaction</button>
+              <button type="button" class="btn hidden" id="cancelBtn">Cancel</button>
+            </div>
+          </form>
+        </div>
+        <div class="bento p-6 lg:col-span-3">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="mono text-xl font-bold">Recent ledger</h2>
+            <button class="btn" data-go="ledger">See all</button>
+          </div>
+          <div id="recentList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INSIGHTS ============ -->
+    <section class="view" id="view-insights">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5" id="statCards"></div>
+      <div class="bento p-6">
+        <div class="flex justify-between items-end mb-4">
+          <div>
+            <h2 class="mono text-xl font-bold">Spend breakdown</h2>
+            <p class="sub">Where your money went</p>
+          </div>
+          <p class="mono text-xl font-bold" id="totalSpent"></p>
+        </div>
+        <div class="stack" id="stackBar"></div>
+        <div id="breakdown" class="grid gap-3 mt-5"></div>
+        <p class="insight" id="insightText"></p>
+      </div>
+    </section>
+
+    <!-- ============ LIMITS ============ -->
+    <section class="view" id="view-limits">
+      <div class="bento p-6">
+        <h2 class="mono text-xl font-bold">Monthly limits</h2>
+        <p class="sub mb-4">Set a ₹ cap per category. Bars track this month's spending live.</p>
+        <div id="limitList" class="grid gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ============ LEDGER ============ -->
+    <section class="view" id="view-ledger">
+      <div class="bento p-6">
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+          <h2 class="mono text-xl font-bold">Transaction history <span class="pill" id="countPill"></span></h2>
+          <div class="flex gap-2">
+            <button class="btn" id="csvBtn">Export CSV</button>
+            <button class="btn" id="excelBtn">Export Excel</button>
+            <button class="btn danger" id="resetBtn">Reset demo data</button>
+          </div>
+        </div>
+        <input id="search" class="field mb-3" placeholder="Search title or category…" />
+        <div class="flex flex-wrap gap-2 mb-4" id="chips"></div>
+        <div class="tbl-wrap">
+          <table id="ledgerTable">
+            <thead>
+              <tr><th>Date</th><th>Title</th><th>Category</th><th>Type</th><th class="r">Amount</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ledgerBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">RupeeTrack • Personal Expense Tracker (CSD0111 Mini Project)</footer>
+  <!-- SheetJS: builds real .xlsx files in the browser (script.js falls back to CSV if this fails to load) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
